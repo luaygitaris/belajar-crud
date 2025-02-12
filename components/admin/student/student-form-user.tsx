@@ -1,12 +1,12 @@
 'use client';
 
-import { signupCredentials } from '@/lib/actions';
+import { signupCredentialsStudents } from '@/lib/actions';
 import Link from 'next/link';
 import { useActionState } from 'react';
-import { RegisterButton } from '../button';
+import { RegisterButton } from '@/components/button';
 
-const FormRegister = () => {
-	const [state, formAction] = useActionState(signupCredentials, null);
+const FormUserStudent = () => {
+	const [state, formAction] = useActionState(signupCredentialsStudents, null);
 
 	return (
 		<form
@@ -72,7 +72,7 @@ const FormRegister = () => {
 					htmlFor='image'
 					className='block mb-2 text-sm font-medium text-gray-900'
 				>
-					Name
+					Image
 				</label>
 				<input
 					type='url'
@@ -112,13 +112,17 @@ const FormRegister = () => {
 				</div>
 			</div>
 			<div>
-				<label htmlFor='role' className='block mb-2 text-sm font-medium text-gray-900'>Role</label>
-				<select name='role' className='border bg-gray-50 border-gray-300 text-gray-900 rounded-lg w-full p-2.5'>
-					<option value='Admin'>Admin</option>
+				<label
+					htmlFor='role'
+					className='block mb-2 text-sm font-medium text-gray-900'
+				>
+					Role
+				</label>
+				<select
+					name='role'
+					className='border bg-gray-50 border-gray-300 text-gray-900 rounded-lg w-full p-2.5'
+				>
 					<option value='Student'>Student</option>
-					<option value='Teacher'>Teacher</option>
-					<option value='Parent'>Parent</option>
-					<option value='User'>User</option>
 				</select>
 				<div
 					aria-live='polite'
@@ -186,4 +190,4 @@ const FormRegister = () => {
 	);
 };
 
-export default FormRegister;
+export default FormUserStudent;

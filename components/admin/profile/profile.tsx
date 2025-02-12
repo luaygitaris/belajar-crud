@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { LogoutButton } from '@/components/auth/button';
+import { LogoutButton } from '@/components/button';
 import { getUserById } from '@/lib/data';
 import Image from 'next/image';
 import Link from 'next/link';

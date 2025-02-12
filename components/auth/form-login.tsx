@@ -2,7 +2,7 @@
 
 import { signInCredentials } from '@/lib/actions';
 import { useActionState } from 'react';
-import { LoginButton } from './button';
+import { LoginButton } from '../button';
 
 const FormLogin = () => {
 	const [state, formAction] = useActionState(signInCredentials, null);

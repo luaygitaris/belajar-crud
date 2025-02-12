@@ -1,6 +1,6 @@
 'use server';
 
-import { EditUserSchema, RegisterSchema, SignInSchema } from './zod';
+import {  EditUserSchema, RegisterSchema, SignInSchema } from './zod';
 import { hashSync } from 'bcrypt-ts';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
@@ -110,7 +110,8 @@ export const editUser = async (
 		console.error('Failed to update user!', error);
 		throw new Error('Failed to update user!');
 	}
-	revalidatePath("/")
+	revalidatePath("/profile")
+	redirect("/profile")
 };
 
 export const deleteUser = async (id: string) => {
@@ -124,4 +125,39 @@ export const deleteUser = async (id: string) => {
 		throw new Error('Failed to delete user!');
 	}
 	redirect('/');
+};
+
+export const signupCredentialsStudents = async (
+	prevState: unknown,
+	formData: FormData
+) => {
+	const validatedFields = RegisterSchema.safeParse(
+		Object.fromEntries(formData.entries())
+	);
+
+	if (!validatedFields.success) {
+		return {
+			error: validatedFields.error.flatten().fieldErrors,
+		};
+	}
+
+	const { name, email, password, image, role, schoolName } = validatedFields.data;
+	const hashedPassword = hashSync(password, 10);
+
+	try {
+		await prisma.user.create({
+			data: {
+				name,
+				email,
+				password: hashedPassword,
+				image,
+				role: role as Role,
+				schoolName,
+			},
+		});
+	} catch (error) {
+		console.error("Failed to Register User!", error)
+		return { message: 'Failed to Register User!' };
+	}
+	redirect('/students/addStudent');
 };

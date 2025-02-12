@@ -1,6 +1,7 @@
 "use client";
 import { deleteUser, editUser } from "@/lib/actions";
 import { User } from "@prisma/client";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import { useActionState } from "react";
 
@@ -85,6 +86,7 @@ const FormActionEditUser = ({ user }: { user: User }) => {
             <form action={formAction2} className="mt-6 text-center">
                 <button 
                     type="submit" 
+                    onClick={() => signOut({ callbackUrl: '/' })}
                     className="py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                     Delete Account
