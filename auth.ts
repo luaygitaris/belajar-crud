@@ -62,6 +62,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
           return token;
       },
+
+      authorized({ auth, request: { nextUrl } }) {
+        const isLoggedIn = !!auth?.user;
+        const ProtectedRoutes = ['/dashboard', '/user', '/product', '/profile'];
+
+        if (!isLoggedIn && ProtectedRoutes.includes(nextUrl.pathname)) {
+            return Response.redirect(new URL('/login', nextUrl));
+        }
+
+        if (isLoggedIn && nextUrl.pathname.startsWith('/login')) {
+            return Response.redirect(new URL('/dashboard', nextUrl));
+        }
+        if (isLoggedIn && nextUrl.pathname.startsWith('/register')) {
+            return Response.redirect(new URL('/dashboard', nextUrl));
+        }
+        return true;
+    },
   },
   providers: [
       Credentials({
