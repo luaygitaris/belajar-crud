@@ -27,37 +27,39 @@ export const getUserById = async (userId: string) => {
 };
 
 export const getStudentbyUser = async () => {
-	const session = await auth();
+  const session = await auth();
 
-	if (!session || !session.user) {
-		redirect('/dashboard');
-	}
+  if (!session || !session.user) {
+    redirect('/dashboard');
+  }
 
-	const userId = session.user.id ?? '';
-	const user = await getUserById(userId);
+  const userId = session.user.id ?? '';
+  const user = await getUserById(userId);
 
-	const role = user?.role;
+  const role = user?.role;
+  const schoolName = user?.schoolName;
 
-	if (role === 'Admin') {
-		try {
-			const students = await prisma.student.findMany({
-				include: { user: { select: { name: true } } },
-			});
-			return students;
-		} catch (error) {
-			console.error('Error fetching students for Admin:', error);
-			return [];
-		}
-	} else {
-		try {
-			const students = await prisma.student.findMany({
-				where: { user: { id: userId } },
-				include: { user: { select: { name: true } } },
-			});
-			return students;
-		} catch (error) {
-			console.error('Error fetching students for non-admin user:', error);
-			return [];
-		}
-	}
+  if (role === 'Admin') {
+    try {
+      const students = await prisma.student.findMany({
+        where: { schoolName },
+        include: { user: { select: { name: true } } },
+      });
+      return students;
+    } catch (error) {
+      console.error('Error fetching students for Admin:', error);
+      return [];
+    }
+  } else {
+    try {
+      const students = await prisma.student.findMany({
+        where: { user: { id: userId } },
+        include: { user: { select: { name: true } } },
+      });
+      return students;
+    } catch (error) {
+      console.error('Error fetching students for non-admin user:', error);
+      return [];
+    }
+  }
 };

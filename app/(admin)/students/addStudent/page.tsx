@@ -2,7 +2,7 @@ import AddStudentPage from '@/components/admin/student/student-form';
 
 const Page = () => {
 	return (
-		<div>
+		<div className='px-5'>
 			<AddStudentPage />
 		</div>
 	);

@@ -1,15 +1,15 @@
 "use client";
-import { deleteUser, editUser } from "@/lib/actions";
+import { DeleteUserButton } from "@/components/button";
+import { editUser } from "@/lib/actions";
 import { User } from "@prisma/client";
-import { signOut } from "next-auth/react";
 import Image from "next/image";
 import { useActionState } from "react";
 
 const FormActionEditUser = ({ user }: { user: User }) => {
     const UpdateUser = editUser.bind(null, user.id);
-    const DeleteUser = deleteUser.bind(null, user.id);
+
     const [state, formAction] = useActionState(UpdateUser, null);
-    const [state2, formAction2] = useActionState(DeleteUser, null);
+
 
     return (
         <div className="max-w-xl mx-auto p-6 bg-white rounded-lg shadow-lg">
@@ -82,18 +82,7 @@ const FormActionEditUser = ({ user }: { user: User }) => {
                 </button>
                 {state?.error?.email && <p className="text-red-500 text-sm mt-2">{state.error.email}</p>}
             </form>
-
-            <form action={formAction2} className="mt-6 text-center">
-                <button 
-                    type="submit" 
-                    onClick={() => signOut({ callbackUrl: '/' })}
-                    className="py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                >
-                    Delete Account
-                </button>
-            </form>
-
-            {state2 && <p className="text-red-500 text-sm mt-4 text-center">{state2}</p>}
+            <DeleteUserButton user={user}/>
         </div>
     );
 };

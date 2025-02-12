@@ -1,6 +1,11 @@
 'use server';
 
-import {  EditUserSchema, RegisterSchema, SignInSchema } from './zod';
+import {
+	EditUserSchema,
+	RegisterSchema,
+	SignInSchema,
+	StudentSchema,
+} from './zod';
 import { hashSync } from 'bcrypt-ts';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
@@ -23,7 +28,8 @@ export const signupCredentials = async (
 		};
 	}
 
-	const { name, email, password, image, role, schoolName } = validatedFields.data;
+	const { name, email, password, image, role, schoolName } =
+		validatedFields.data;
 	const hashedPassword = hashSync(password, 10);
 
 	try {
@@ -38,7 +44,7 @@ export const signupCredentials = async (
 			},
 		});
 	} catch (error) {
-		console.error("Failed to Register User!", error)
+		console.error('Failed to Register User!', error);
 		return { message: 'Failed to Register User!' };
 	}
 	redirect('/dashboard');
@@ -91,8 +97,7 @@ export const editUser = async (
 		};
 	}
 
-	const { name, email, schoolName, image, role } =
-		validatedFields.data;
+	const { name, email, schoolName, image, role } = validatedFields.data;
 
 	try {
 		await prisma.user.update({
@@ -110,8 +115,8 @@ export const editUser = async (
 		console.error('Failed to update user!', error);
 		throw new Error('Failed to update user!');
 	}
-	revalidatePath("/profile")
-	redirect("/profile")
+	revalidatePath('/profile');
+	redirect('/profile');
 };
 
 export const deleteUser = async (id: string) => {
@@ -141,7 +146,8 @@ export const signupCredentialsStudents = async (
 		};
 	}
 
-	const { name, email, password, image, role, schoolName } = validatedFields.data;
+	const { name, email, password, image, role, schoolName } =
+		validatedFields.data;
 	const hashedPassword = hashSync(password, 10);
 
 	try {
@@ -156,8 +162,85 @@ export const signupCredentialsStudents = async (
 			},
 		});
 	} catch (error) {
-		console.error("Failed to Register User!", error)
+		console.error('Failed to Register User!', error);
 		return { message: 'Failed to Register User!' };
 	}
 	redirect('/students/addStudent');
 };
+
+export const addStudent = async (prevState: unknown, formData: FormData) => {
+	const data = Object.fromEntries(formData.entries());
+
+	try {
+		const grade = parseInt(data.grade as string, 10);
+		if (isNaN(grade)) {
+			throw new Error('Invalid grade value');
+		}
+
+		await prisma.student.create({
+			data: {
+				name: data.name as string,
+				email: data.email as string,
+				address: data.address as string,
+				nim: data.nim as string,
+				grade: grade,
+				class: data.class as string,
+				parent: data.parent as string,
+				phone: data.phone as string,
+				schoolName: data.schoolName as string,
+				birthday: new Date(data.birthday as string),
+			},
+		});
+
+		revalidatePath('/students');
+	} catch (error) {
+		console.error('Failed to create student:', error);
+		return { message: 'Failed to create student' };
+	}
+
+	redirect('/students');
+};
+
+export const addStudentSchema = async (prevState: unknown, formData: FormData) => {
+	const data = Object.fromEntries(formData.entries());
+  
+	// Validate the data using the Zod schema
+	const validatedFields = StudentSchema.safeParse(data);
+  
+	if (!validatedFields.success) {
+	  return {
+		error: validatedFields.error.flatten().fieldErrors,
+	  };
+	}
+  
+	const { name, email, address, nim, grade, class: studentClass, parent, phone, schoolName, birthday } =
+	  validatedFields.data;
+  
+	// Convert grade and birthday to the correct types
+	const gradeNumber = parseInt(grade, 10);
+	const birthdayDate = new Date(birthday);
+  
+	try {
+	  // Create student in the database
+	  await prisma.student.create({
+		data: {
+		  name,
+		  email,
+		  address,
+		  nim,
+		  grade: gradeNumber,
+		  class: studentClass,
+		  parent,
+		  phone,
+		  schoolName,
+		  birthday: birthdayDate,
+		},
+	  });
+  
+	  revalidatePath('/students');
+	} catch (error) {
+		console.error('Failed to create student:', error);
+		return { message: 'Failed to create student' };
+	}
+	redirect('/students');
+  };
