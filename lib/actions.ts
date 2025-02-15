@@ -124,7 +124,7 @@ export const deleteUser = async (id: string) => {
 		await prisma.user.delete({
 			where: { id },
 		});
-		revalidatePath('/profile'); // Revalidate path untuk memperbarui data
+		revalidatePath('/profile');
 	} catch (error) {
 		console.error('Failed to delete user!', error);
 		throw new Error('Failed to delete user!');
@@ -171,24 +171,45 @@ export const signupCredentialsStudents = async (
 export const addStudent = async (prevState: unknown, formData: FormData) => {
 	const data = Object.fromEntries(formData.entries());
 
-	try {
-		const grade = parseInt(data.grade as string, 10);
-		if (isNaN(grade)) {
-			throw new Error('Invalid grade value');
-		}
+	const validatedFields = StudentSchema.safeParse(data);
 
+	if (!validatedFields.success) {
+		return {
+			error: validatedFields.error.flatten().fieldErrors,
+		};
+	}
+
+	const {
+		name,
+		email,
+		image,
+		address,
+		nim,
+		grade,
+		class: studentClass,
+		parent,
+		phone,
+		schoolName,
+		birthday,
+	} = validatedFields.data;
+
+	const gradeNumber = parseInt(grade, 10);
+	const birthdayDate = new Date(birthday);
+
+	try {
 		await prisma.student.create({
 			data: {
-				name: data.name as string,
-				email: data.email as string,
-				address: data.address as string,
-				nim: data.nim as string,
-				grade: grade,
-				class: data.class as string,
-				parent: data.parent as string,
-				phone: data.phone as string,
-				schoolName: data.schoolName as string,
-				birthday: new Date(data.birthday as string),
+				name,
+				email,
+				image,
+				address,
+				nim,
+				grade: gradeNumber,
+				class: studentClass,
+				parent,
+				phone,
+				schoolName,
+				birthday: birthdayDate,
 			},
 		});
 
@@ -197,50 +218,83 @@ export const addStudent = async (prevState: unknown, formData: FormData) => {
 		console.error('Failed to create student:', error);
 		return { message: 'Failed to create student' };
 	}
-
 	redirect('/students');
 };
 
-export const addStudentSchema = async (prevState: unknown, formData: FormData) => {
-	const data = Object.fromEntries(formData.entries());
-  
-	// Validate the data using the Zod schema
-	const validatedFields = StudentSchema.safeParse(data);
-  
+export const updateStudent = async (
+	id: string,
+	prevState: unknown,
+	formData: FormData
+) => {
+	const validatedFields = StudentSchema.safeParse(
+		Object.fromEntries(formData.entries())
+	);
+
 	if (!validatedFields.success) {
-	  return {
-		error: validatedFields.error.flatten().fieldErrors,
-	  };
+		return {
+			error: validatedFields.error.flatten().fieldErrors,
+		};
 	}
-  
-	const { name, email, address, nim, grade, class: studentClass, parent, phone, schoolName, birthday } =
-	  validatedFields.data;
-  
-	// Convert grade and birthday to the correct types
+
+	const {
+		name,
+		email,
+		address,
+		nim,
+		image,
+		grade,
+		class: studentClass,
+		parent,
+		phone,
+		schoolName,
+		birthday,
+	} = validatedFields.data;
+
 	const gradeNumber = parseInt(grade, 10);
 	const birthdayDate = new Date(birthday);
-  
+
 	try {
-	  // Create student in the database
-	  await prisma.student.create({
-		data: {
-		  name,
-		  email,
-		  address,
-		  nim,
-		  grade: gradeNumber,
-		  class: studentClass,
-		  parent,
-		  phone,
-		  schoolName,
-		  birthday: birthdayDate,
-		},
-	  });
-  
-	  revalidatePath('/students');
+		await prisma.student.update({
+			where: { id },
+			data: {
+				name,
+				email,
+				address,
+				nim,
+				image,
+				grade: gradeNumber,
+				class: studentClass,
+				parent,
+				phone,
+				schoolName,
+				birthday: birthdayDate,
+			},
+		});
+
+		revalidatePath('/students');
 	} catch (error) {
 		console.error('Failed to create student:', error);
 		return { message: 'Failed to create student' };
 	}
+	revalidatePath('/students');
 	redirect('/students');
-  };
+};
+
+export const deleteStudent = async (id: string) => {
+	try {
+		await prisma.student.delete({
+			where: { id },
+		});
+		await prisma.user.delete({
+			where:{id}
+		})
+		revalidatePath('/students')
+	} catch (error) {
+		console.error('Failed to delete student!', error)
+		throw new Error('Failed to delete student!')
+	}
+	redirect('/students')
+};
+
+
+

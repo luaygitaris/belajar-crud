@@ -1,11 +1,11 @@
 'use client';
 
-import { addStudentSchema } from '@/lib/actions';
+import { addStudent } from '@/lib/actions';
 import { useActionState } from 'react';
 import { AddStudentButton } from '@/components/button';
 
 const AddStudentPage = () => {
-	const [state, formAction] = useActionState(addStudentSchema, null);
+	const [state, formAction] = useActionState(addStudent, null);
 
 	return (
 		<div className='space-y-6 bg-white p-8 rounded-lg shadow-lg max-w-md mx-auto'>
@@ -60,6 +60,28 @@ const AddStudentPage = () => {
 					>
 						<span className='text-sm text-red-500 mt-2'>
 							{state?.error?.email}
+						</span>
+					</div>
+				</div>
+				<div>
+					<label
+						htmlFor='image'
+						className='block mb-2 text-sm font-medium text-gray-900'
+					>
+						Image URL
+					</label>
+					<input
+						type='url'
+						name='image'
+						placeholder='https://image.com'
+						className='border bg-gray-50 border-gray-300 text-gray-900 rounded-lg w-full p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+					/>
+					<div
+						aria-live='polite'
+						aria-atomic='true'
+					>
+						<span className='text-sm text-red-500 mt-2'>
+							{state?.error?.image}
 						</span>
 					</div>
 				</div>

@@ -14,6 +14,7 @@ export default {
         ungu: '#4D44B5',
 				lamaPurple: '#CFCEFF',
 				lamaPurpleLight: '#F1F0FF',
+        lamaSky: "#C3EBFA",
 				orange: '#FB7D5B',
 				kuning: '#FCC43E',
 				maintext: '#303972',

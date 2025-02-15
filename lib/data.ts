@@ -63,3 +63,14 @@ export const getStudentbyUser = async () => {
     }
   }
 };
+
+export const getStudentbyId = async (studentId: string) => {
+  try {
+    const student = await prisma.student.findUnique({
+      where: {id: studentId}
+    })
+    return student
+  } catch (error) {
+    console.log(error)
+  }
+}

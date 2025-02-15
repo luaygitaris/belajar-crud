@@ -1,13 +1,12 @@
 'use client';
 
-import { deleteUser } from '@/lib/actions';
-import { User } from '@prisma/client';
-import { PencilIcon } from 'lucide-react';
+import { deleteStudent, deleteUser } from '@/lib/actions';
+import { Student, User } from '@prisma/client';
+import { Delete, Edit, PencilIcon } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-
 
 export const LoginButton = () => {
 	const { pending } = useFormStatus();
@@ -90,7 +89,6 @@ export const AddUserStudentButton = () => {
 	);
 };
 
-
 export const AddStudentButton = () => {
 	return (
 		<button
@@ -101,3 +99,29 @@ export const AddStudentButton = () => {
 		</button>
 	);
 };
+
+export const DeleteStudentButton = ({student}: {student: Student}) => {
+	const DeleteStudent = deleteStudent.bind(null, student.id);
+	const [state, formAction] = useActionState(DeleteStudent, null);
+
+	return (
+		<form
+			action={formAction}
+		>	
+			<button className='w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple'>
+												<Delete />
+											</button>
+			{state && (
+				<p className='text-red-500 text-sm mt-4 text-center'>{state}</p>
+			)}
+		</form>
+	);
+};
+
+export const EditStudentButton = () => {
+	return (
+		<Link href={'/students/editStudent'}>
+			<Edit/>
+		</Link>
+	)
+}

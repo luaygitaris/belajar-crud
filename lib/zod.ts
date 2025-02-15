@@ -35,6 +35,7 @@ export const EditUserSchema = object({
 export const StudentSchema = z.object({
 	name: z.string().min(1, 'Name is required'),
 	email: z.string().min(1, 'Email is required'),
+	image: z.string(),
 	address: z.string().min(1, 'Address is required'),
 	nim: z.string().min(1, 'NIM is required'),
 	grade: z.string().refine((val) => !isNaN(Number(val)), {
@@ -48,3 +49,4 @@ export const StudentSchema = z.object({
 		message: 'Invalid birthday date',
 	}),
 });
+
