@@ -49,4 +49,20 @@ export const StudentSchema = z.object({
 		message: 'Invalid birthday date',
 	}),
 });
+export const TeacherSchema = z.object({
+	name: z.string().min(1, 'Name is required'),
+	email: z.string().min(1, 'Email is required'),
+	address: z.string().min(1, 'Address is required'),
+	teacherId: z.string().refine((val) => !isNaN(Number(val)), {
+		message: 'Invalid grade value',
+	}),
+	class: z.string().min(1, 'Class is required'),
+	subject: z.string().min(1, 'NIM is required'),
+	birthday: z.string().refine((val) => !isNaN(Date.parse(val)), {
+		message: 'Invalid birthday date',
+	}),
+	image: z.string(),
+	schoolName: z.string().min(1, 'School name is required'),
+	phone: z.string().min(1, 'Phone number is required'),
+});
 

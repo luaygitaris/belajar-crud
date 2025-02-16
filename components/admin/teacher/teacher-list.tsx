@@ -1,11 +1,11 @@
 import { auth } from '@/auth';
-import { AddUserStudentTeacherButton, DeleteStudentButton } from '@/components/button';
-import { getStudentbyUser, getUserById } from '@/lib/data';
+import { AddUserStudentTeacherButton, DeleteTeacherButton } from '@/components/button';
+import { getTeacherbyUser, getUserById } from '@/lib/data';
 import { View } from 'lucide-react';
 import Link from 'next/link';
 
-const StudentList = async () => {
-  const students = await getStudentbyUser();
+const TeacherList = async () => {
+  const teachers = await getTeacherbyUser();
   const session = await auth();
 
   const userId = session?.user?.id ?? '';
@@ -14,25 +14,25 @@ const StudentList = async () => {
   const userRole = user?.role ?? '';
 
 
-  const sortedStudents = students?.sort((a, b) => {
-	const nameA = a.name ?? '';
-    const nameB = b.name ?? '';
-    const nimA = a.nim ?? '';
-    const nimB = b.nim ?? '';
+  // const sortedStudents = teachers?.sort((a, b) => {
+	// const nameA = a.name ?? '';
+  //   const nameB = b.name ?? '';
+  //   const nimA = a.teacherId ?? '';
+  //   const nimB = b.teacherId ?? '';
 
-    const nameComparison = nameA.localeCompare(nameB);
-    if (nameComparison !== 0) return nameComparison;
+  //   const nameComparison = nameA.localeCompare(nameB);
+  //   if (nameComparison !== 0) return nameComparison;
 
-    return nimA.localeCompare(nimB, undefined, { numeric: true });
-  });
+  //   return nimA.localeCompare(nimB, undefined, { numeric: true });
+  // });
 
-  if (!students?.length) {
+  if (!teachers?.length) {
     return (
       <div className='flex flex-col items-center justify-center min-h-screen py-10'>
         <h1 className='text-3xl font-semibold text-gray-700 mb-4'>
-          No Students Found
+          No Teachers Found
         </h1>
-        <AddUserStudentTeacherButton href={'/students/addStudent'}>Add Student</AddUserStudentTeacherButton>
+        <AddUserStudentTeacherButton href='#'>Add Teacher</AddUserStudentTeacherButton>
       </div>
     );
   }
@@ -40,8 +40,8 @@ const StudentList = async () => {
   return (
     <div className='container mx-auto py-6'>
       <div className='flex justify-between items-center mb-4'>
-        <h1 className='text-3xl font-semibold text-gray-800'>Student List</h1>
-        <AddUserStudentTeacherButton href={'/students/addStudent'}>Add Student</AddUserStudentTeacherButton>
+        <h1 className='text-3xl font-semibold text-gray-800'>Teachers List</h1>
+        <AddUserStudentTeacherButton href='#'>Add Teacher</AddUserStudentTeacherButton>
       </div>
 
       <div className='overflow-x-auto bg-white shadow-lg rounded-lg'>
@@ -64,29 +64,29 @@ const StudentList = async () => {
             </tr>
           </thead>
           <tbody>
-            {sortedStudents?.map((student) => (
+            {teachers.map((teacher) => (
               <tr
-                key={student.id}
+                key={teacher.id}
                 className='border-b hover:bg-gray-50 transition-colors'
               >
                 <td className='py-4 px-6 flex-col'>
-                  <h3 className='font-semibold'>{student.name}</h3>
-                  <p className='text-gray-500 text-xs'>{student.class}</p>
+                  <h3 className='font-semibold'>{teacher.name}</h3>
+                  <p className='text-gray-500 text-xs'>{teacher.class}</p>
                 </td>
-                <td className='py-4 px-6'>{student.nim}</td>
-                <td className='py-4 px-6 hidden md:table-cell'>{student.address}</td>
+                <td className='py-4 px-6'>{teacher.teacherId}</td>
+                <td className='py-4 px-6 hidden md:table-cell'>{teacher.address}</td>
                 <td className='py-4 px-6 hidden md:table-cell'>
-                  {new Date(student.birthday).toLocaleDateString()}
+                  {new Date(teacher.birthday).toLocaleDateString()}
                 </td>
                 <td>
                   <div className='flex items-center justify-center gap-2'>
-                    <Link href={`/students/${student.id}`}>
+                    <Link href={`/teachers/${teacher.id}`}>
                       <button className='w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky'>
                         <View />
                       </button>
                     </Link>
                     {userRole === 'Admin' && (
-                      <DeleteStudentButton student={student} />
+                      <DeleteTeacherButton teacher={teacher} />
                     )}
                   </div>
                 </td>
@@ -99,4 +99,4 @@ const StudentList = async () => {
   );
 };
 
-export default StudentList;
+export default TeacherList;

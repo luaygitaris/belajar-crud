@@ -286,15 +286,63 @@ export const deleteStudent = async (id: string) => {
 			where: { id },
 		});
 		await prisma.user.delete({
-			where:{id}
-		})
-		revalidatePath('/students')
+			where: { id },
+		});
+		revalidatePath('/students');
 	} catch (error) {
-		console.error('Failed to delete student!', error)
-		throw new Error('Failed to delete student!')
+		console.error('Failed to delete student!', error);
+		throw new Error('Failed to delete student!');
 	}
-	redirect('/students')
+	redirect('/students');
 };
 
+export const signupCredentialsTeachers = async (
+	prevState: unknown,
+	formData: FormData
+) => {
+	const validatedFields = RegisterSchema.safeParse(
+		Object.fromEntries(formData.entries())
+	);
 
+	if (!validatedFields.success) {
+		return {
+			error: validatedFields.error.flatten().fieldErrors
+		}
+	}
 
+	const {name, email, password, image, role, schoolName} = validatedFields.data
+	const hashedPassword = hashSync(password, 10)
+
+	try {
+		await prisma.user.create({
+			data:{
+				name,
+				email,
+				password: hashedPassword,
+				image,
+				role: role as Role,
+				schoolName,
+			}
+		})
+	} catch (error) {
+		console.error('Failed to Register User!', error)
+		return { message: 'Failed to Register User!'}
+	}
+	redirect('/teachers')
+};
+
+export const deleteTeacher = async (id: string) => {
+	try {
+		await prisma.teacher.delete({
+			where: { id },
+		});
+		await prisma.user.delete({
+			where: { id },
+		});
+		revalidatePath('/teachers');
+	} catch (error) {
+		console.error('Failed to delete teacher!', error);
+		throw new Error('Failed to delete teacher!');
+	}
+	redirect('/teachers');
+};

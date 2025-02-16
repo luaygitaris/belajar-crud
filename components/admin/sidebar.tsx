@@ -26,7 +26,7 @@ const items = [
 			},
 			{
 				title: 'Teacher',
-				url: '#',
+				url: '/teachers',
 				icon: Speech,
 				visible: ['Admin'],
 			},

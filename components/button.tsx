@@ -1,7 +1,7 @@
 'use client';
 
 import { deleteStudent, deleteUser } from '@/lib/actions';
-import { Student, User } from '@prisma/client';
+import { Student, Teacher, User } from '@prisma/client';
 import { Delete, Edit, PencilIcon } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import Link from 'next/link';
@@ -78,16 +78,22 @@ export const LogoutButton = () => {
 	);
 };
 
-export const AddUserStudentButton = () => {
+export const AddUserStudentTeacherButton = ({
+	href,
+	children,
+  }: {
+	href: string;
+	children: React.ReactNode;
+  }) => {
 	return (
-		<Link
-			href={'/students/addUserStudent'}
-			className='w-fit bg-blue-700 text-white font-medium rounded-lg px-5 py-2.5 text-center uppercase hover:bg-blue-800'
-		>
-			Add Student
-		</Link>
+	  <Link
+		href={href}
+		className="w-fit bg-blue-700 text-white font-medium rounded-lg px-5 py-2.5 text-center uppercase hover:bg-blue-800"
+	  >
+		{children}
+	  </Link>
 	);
-};
+  };
 
 export const AddStudentButton = () => {
 	return (
@@ -125,3 +131,20 @@ export const EditStudentButton = () => {
 		</Link>
 	)
 }
+export const DeleteTeacherButton = ({teacher}: {teacher: Teacher}) => {
+	const DeleteStudent = deleteStudent.bind(null, teacher.id);
+	const [state, formAction] = useActionState(DeleteStudent, null);
+
+	return (
+		<form
+			action={formAction}
+		>	
+			<button className='w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple'>
+												<Delete />
+											</button>
+			{state && (
+				<p className='text-red-500 text-sm mt-4 text-center'>{state}</p>
+			)}
+		</form>
+	);
+};

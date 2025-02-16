@@ -74,3 +74,52 @@ export const getStudentbyId = async (studentId: string) => {
     console.log(error)
   }
 }
+
+export const getTeacherbyUser = async () => {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    redirect('/dashboard');
+  }
+
+  const userId = session.user.id ?? '';
+  const user = await getUserById(userId);
+
+  const role = user?.role;
+  const schoolName = user?.schoolName;
+
+  if (role === 'Admin') {
+    try {
+      const teachers = await prisma.teacher.findMany({
+        where: { schoolName },
+        include: { user: { select: { name: true } } },
+      });
+      return teachers;
+    } catch (error) {
+      console.error('Error fetching students for Admin:', error);
+      return [];
+    }
+  } else {
+    try {
+      const teachers = await prisma.teacher.findMany({
+        where: { user: { id: userId } },
+        include: { user: { select: { name: true } } },
+      });
+      return teachers;
+    } catch (error) {
+      console.error('Error fetching students for non-admin user:', error);
+      return [];
+    }
+  }
+};
+
+export const getTeacherbyId = async (teacherId: string) => {
+  try {
+    const teacher = await prisma.teacher.findUnique({
+      where: {id: teacherId}
+    })
+    return teacher
+  } catch (error) {
+    console.log(error)
+  }
+}
