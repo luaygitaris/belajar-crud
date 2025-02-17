@@ -5,6 +5,7 @@ import {
 	RegisterSchema,
 	SignInSchema,
 	StudentSchema,
+	TeacherSchema,
 } from './zod';
 import { hashSync } from 'bcrypt-ts';
 import { prisma } from '@/lib/prisma';
@@ -328,7 +329,7 @@ export const signupCredentialsTeachers = async (
 		console.error('Failed to Register User!', error)
 		return { message: 'Failed to Register User!'}
 	}
-	redirect('/teachers')
+	redirect('/teachers/addStudent')
 };
 
 export const deleteTeacher = async (id: string) => {
@@ -344,5 +345,113 @@ export const deleteTeacher = async (id: string) => {
 		console.error('Failed to delete teacher!', error);
 		throw new Error('Failed to delete teacher!');
 	}
+	redirect('/teachers');
+};
+
+export const addTeacher = async (prevState: unknown, formData: FormData) => {
+	const data = Object.fromEntries(formData.entries());
+
+	const validatedFields = TeacherSchema.safeParse(data);
+
+	if (!validatedFields.success) {
+		return {
+			error: validatedFields.error.flatten().fieldErrors,
+		};
+	}
+
+	const {
+		name,
+		email,
+		image,
+		address,
+		teacherId,
+		class: studentClass,
+		phone,
+		schoolName,
+		birthday,
+		subject
+	} = validatedFields.data;
+
+	const gradeNumber = parseInt(teacherId, 10);
+	const birthdayDate = new Date(birthday);
+
+	try {
+		await prisma.teacher.create({
+			data: {
+				name,
+				email,
+				image,
+				address,
+				teacherId: gradeNumber,
+				class: studentClass,
+				phone,
+				schoolName,
+				birthday: birthdayDate,
+				subject
+			},
+		});
+
+		revalidatePath('/teachers');
+	} catch (error) {
+		console.error('Failed to create student:', error);
+		return { message: 'Failed to create student' };
+	}
+	redirect('/teachers');
+};
+
+export const updateTeacher = async (
+	id: string,
+	prevState: unknown,
+	formData: FormData
+) => {
+	const validatedFields = TeacherSchema.safeParse(
+		Object.fromEntries(formData.entries())
+	);
+
+	if (!validatedFields.success) {
+		return {
+			error: validatedFields.error.flatten().fieldErrors,
+		};
+	}
+
+	const {
+		name,
+		email,
+		image,
+		address,
+		teacherId,
+		class: studentClass,
+		phone,
+		schoolName,
+		birthday,
+		subject
+	} = validatedFields.data;
+
+	const gradeNumber = parseInt(teacherId, 10);
+	const birthdayDate = new Date(birthday);
+
+	try {
+		await prisma.teacher.update({
+			where: { id },
+			data: {
+				name,
+				email,
+				image,
+				address,
+				teacherId: gradeNumber,
+				class: studentClass,
+				phone,
+				schoolName,
+				birthday: birthdayDate,
+				subject
+			},
+		});
+
+		revalidatePath('/teachers');
+	} catch (error) {
+		console.error('Failed to create teacher:', error);
+		return { message: 'Failed to create teacher' };
+	}
+	revalidatePath('/teachers');
 	redirect('/teachers');
 };

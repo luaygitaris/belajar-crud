@@ -1,11 +1,11 @@
 'use client';
 
-import { signupCredentialsStudents } from '@/lib/actions';
+import { signupCredentialsTeachers } from '@/lib/actions';
 import { useActionState } from 'react';
 import { RegisterButton } from '@/components/button';
 
-const FormUserStudent = () => {
-  const [state, formAction] = useActionState(signupCredentialsStudents, null);
+const FormUserTeacher = () => {
+  const [state, formAction] = useActionState(signupCredentialsTeachers, null);
 
   return (
     <form
@@ -120,7 +120,7 @@ const FormUserStudent = () => {
           name='role'
           className='border bg-gray-50 border-gray-300 text-gray-900 rounded-lg w-full p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
         >
-          <option value='Student'>Student</option>
+          <option value='Teacher'>Teacher</option>
         </select>
         <div
           aria-live='polite'
@@ -182,4 +182,4 @@ const FormUserStudent = () => {
   );
 };
 
-export default FormUserStudent;
+export default FormUserTeacher;

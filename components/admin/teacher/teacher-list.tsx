@@ -14,17 +14,13 @@ const TeacherList = async () => {
   const userRole = user?.role ?? '';
 
 
-  // const sortedStudents = teachers?.sort((a, b) => {
-	// const nameA = a.name ?? '';
-  //   const nameB = b.name ?? '';
-  //   const nimA = a.teacherId ?? '';
-  //   const nimB = b.teacherId ?? '';
+  const sortedTeachers = teachers?.sort((a, b) => {
+	const nameA = a.name ?? '';
+    const nameB = b.name ?? '';
 
-  //   const nameComparison = nameA.localeCompare(nameB);
-  //   if (nameComparison !== 0) return nameComparison;
-
-  //   return nimA.localeCompare(nimB, undefined, { numeric: true });
-  // });
+    const nameComparison = nameA.localeCompare(nameB);
+    return nameComparison
+  });
 
   if (!teachers?.length) {
     return (
@@ -32,7 +28,7 @@ const TeacherList = async () => {
         <h1 className='text-3xl font-semibold text-gray-700 mb-4'>
           No Teachers Found
         </h1>
-        <AddUserStudentTeacherButton href='#'>Add Teacher</AddUserStudentTeacherButton>
+        <AddUserStudentTeacherButton href='/teachers/addUserTeacher'>Add Teacher</AddUserStudentTeacherButton>
       </div>
     );
   }
@@ -41,7 +37,7 @@ const TeacherList = async () => {
     <div className='container mx-auto py-6'>
       <div className='flex justify-between items-center mb-4'>
         <h1 className='text-3xl font-semibold text-gray-800'>Teachers List</h1>
-        <AddUserStudentTeacherButton href='#'>Add Teacher</AddUserStudentTeacherButton>
+        <AddUserStudentTeacherButton href='/teachers/addUserTeacher'>Add Teacher</AddUserStudentTeacherButton>
       </div>
 
       <div className='overflow-x-auto bg-white shadow-lg rounded-lg'>
@@ -49,9 +45,9 @@ const TeacherList = async () => {
           <thead className='bg-gray-100 text-gray-600'>
             <tr>
               <th className='py-3 px-6 font-semibold text-sm uppercase'>
-                Nama Siswa
+                Nama Guru
               </th>
-              <th className='py-3 px-6 font-semibold text-sm uppercase'>NIM</th>
+              <th className='py-3 px-6 font-semibold text-sm uppercase'>Teacher Id</th>
               <th className='py-3 px-6 font-semibold text-sm uppercase hidden md:table-cell'>
                 Alamat
               </th>
@@ -64,7 +60,7 @@ const TeacherList = async () => {
             </tr>
           </thead>
           <tbody>
-            {teachers.map((teacher) => (
+            {sortedTeachers.map((teacher) => (
               <tr
                 key={teacher.id}
                 className='border-b hover:bg-gray-50 transition-colors'
