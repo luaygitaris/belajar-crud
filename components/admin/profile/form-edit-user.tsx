@@ -1,7 +1,7 @@
 import { getUserById } from '@/lib/data';
 
 import FormActionEditUser from './form-action-edit-user';
-import { auth } from '@/auth';
+import { auth } from '@/app/api/auth/auth';
 
 const EditProfileUser = async () => {
 	const session = await auth();

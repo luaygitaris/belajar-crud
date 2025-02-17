@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { auth } from '@/app/api/auth/auth';
 import { LogoutButton } from '@/components/button';
 import { getUserById } from '@/lib/data';
 import Image from 'next/image';

@@ -6,7 +6,7 @@ import photo from '@/public/hero/hero1.png';
 import Link from 'next/link';
 import { CgPerformance } from 'react-icons/cg';
 import { MdClass, MdPlayLesson } from 'react-icons/md';
-import { auth } from '@/auth';
+import { auth } from '@/app/api/auth/auth';
 
 const TeacherDetailPage = async ({
 	params,

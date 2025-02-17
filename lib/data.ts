@@ -1,5 +1,5 @@
 import { prisma } from './prisma';
-import { auth } from '@/auth';
+import { auth } from '@/app/api/auth/auth';
 import { redirect } from 'next/navigation';
 
 export const getUsers = async () => {

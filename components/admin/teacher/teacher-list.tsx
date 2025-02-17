@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { auth } from '@/app/api/auth/auth';
 import { AddUserStudentTeacherButton, DeleteTeacherButton } from '@/components/button';
 import { getTeacherbyUser, getUserById } from '@/lib/data';
 import { View } from 'lucide-react';

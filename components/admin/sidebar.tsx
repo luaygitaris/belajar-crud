@@ -12,7 +12,7 @@ import {
 import { getUserById } from '@/lib/data';
 import Image from 'next/image';
 import Link from 'next/link';
-import { auth } from '@/auth';
+import { auth } from '@/app/api/auth/auth';
 
 const items = [
 	{
