@@ -4,9 +4,12 @@ import { notFound } from 'next/navigation';
 import photo from '@/public/hero/hero1.png';
 import FormActionEditUser from '@/components/admin/teacher/form-action-edit-student';
 
-const Page = async ({ params }: { params: { id: string } }) => {
-	const { id } = await params;
-	const teacher = await getTeacherbyId(id);
+const Page = async ({
+	params,
+  }: {
+	params: Promise<{ edit: string }>
+  }) => {
+	const teacher = await getTeacherbyId((await params).edit);
 	const image = teacher?.image || photo;
 
 	if (!teacher) {

@@ -1,6 +1,14 @@
 import { getStudentbyId, getUserById } from '@/lib/data';
 import { notFound } from 'next/navigation';
-import { Mail, Home, BookOpen, Phone, Cake, BracesIcon, Edit } from 'lucide-react';
+import {
+	Mail,
+	Home,
+	BookOpen,
+	Phone,
+	Cake,
+	BracesIcon,
+	Edit,
+} from 'lucide-react';
 import Image from 'next/image';
 import photo from '@/public/hero/hero1.png';
 import Link from 'next/link';
@@ -8,9 +16,13 @@ import { CgPerformance } from 'react-icons/cg';
 import { MdClass, MdPlayLesson } from 'react-icons/md';
 import { auth } from '@/auth';
 
-const StudentDetailPage = async ({ params }: { params: { id: string } }) => {
-	const { id } = await params;
-	const student = await getStudentbyId(id);
+const StudentDetailPage = async ({
+	params,
+  }: {
+	params: Promise<{ id: string }>
+  }) => {
+	const student = await getStudentbyId((await params).id);
+
 	const image = student?.image || photo;
 
 	const session = await auth();

@@ -8,9 +8,11 @@ import { CgPerformance } from 'react-icons/cg';
 import { MdClass, MdPlayLesson } from 'react-icons/md';
 import { auth } from '@/auth';
 
-const TeacherDetailPage = async ({ params }: { params: { id: string } }) => {
-	const { id } = await params;
-	const teacher = await getTeacherbyId(id);
+const TeacherDetailPage = async ({
+	params,
+  }: {
+	params: Promise<{ id: string }>}) => {
+	const teacher = await getTeacherbyId((await params).id);
 	const image = teacher?.image || photo;
 
 	const session = await auth();
