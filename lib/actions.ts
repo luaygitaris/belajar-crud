@@ -1,6 +1,7 @@
 'use server';
 
 import {
+	ClassSchema,
 	EditUserSchema,
 	RegisterSchema,
 	SignInSchema,
@@ -307,29 +308,30 @@ export const signupCredentialsTeachers = async (
 
 	if (!validatedFields.success) {
 		return {
-			error: validatedFields.error.flatten().fieldErrors
-		}
+			error: validatedFields.error.flatten().fieldErrors,
+		};
 	}
 
-	const {name, email, password, image, role, schoolName} = validatedFields.data
-	const hashedPassword = hashSync(password, 10)
+	const { name, email, password, image, role, schoolName } =
+		validatedFields.data;
+	const hashedPassword = hashSync(password, 10);
 
 	try {
 		await prisma.user.create({
-			data:{
+			data: {
 				name,
 				email,
 				password: hashedPassword,
 				image,
 				role: role as Role,
 				schoolName,
-			}
-		})
+			},
+		});
 	} catch (error) {
-		console.error('Failed to Register User!', error)
-		return { message: 'Failed to Register User!'}
+		console.error('Failed to Register User!', error);
+		return { message: 'Failed to Register User!' };
 	}
-	redirect('/teachers/addStudent')
+	redirect('/teachers/addStudent');
 };
 
 export const deleteTeacher = async (id: string) => {
@@ -369,7 +371,7 @@ export const addTeacher = async (prevState: unknown, formData: FormData) => {
 		phone,
 		schoolName,
 		birthday,
-		subject
+		subject,
 	} = validatedFields.data;
 
 	const gradeNumber = parseInt(teacherId, 10);
@@ -387,7 +389,7 @@ export const addTeacher = async (prevState: unknown, formData: FormData) => {
 				phone,
 				schoolName,
 				birthday: birthdayDate,
-				subject
+				subject,
 			},
 		});
 
@@ -424,7 +426,7 @@ export const updateTeacher = async (
 		phone,
 		schoolName,
 		birthday,
-		subject
+		subject,
 	} = validatedFields.data;
 
 	const gradeNumber = parseInt(teacherId, 10);
@@ -443,7 +445,7 @@ export const updateTeacher = async (
 				phone,
 				schoolName,
 				birthday: birthdayDate,
-				subject
+				subject,
 			},
 		});
 
@@ -454,4 +456,91 @@ export const updateTeacher = async (
 	}
 	revalidatePath('/teachers');
 	redirect('/teachers');
+};
+
+// Kelas
+export const addClass = async (prevState: unknown, formData: FormData) => {
+	const data = Object.fromEntries(formData.entries());
+	const validatedFields = ClassSchema.safeParse(data);
+
+	if (!validatedFields.success) {
+		return {
+			error: validatedFields.error.flatten().fieldErrors,
+		};
+	}
+
+	const { className, grade, capacity, teacherId } = validatedFields.data;
+
+	const gradeNumber = parseInt(grade, 10);
+	const capacityNumber = parseInt(capacity, 10);
+
+	try {
+		await prisma.class.create({
+			data: {
+				className,
+				grade: gradeNumber,
+				capacity: capacityNumber,
+				teacherId,
+			},
+		});
+
+		revalidatePath('/classes');
+	} catch (error) {
+		console.error('Failed to create class:', error);
+		return { message: 'Failed to create class' };
+	}
+	redirect('/classes');
+};
+
+export const updateClass = async (
+	id: string,
+	prevState: unknown,
+	formData: FormData
+) => {
+	const validatedFields = ClassSchema.safeParse(
+		Object.fromEntries(formData.entries())
+	);
+
+	if (!validatedFields.success) {
+		return {
+			error: validatedFields.error.flatten().fieldErrors,
+		};
+	}
+
+	const { className, grade, capacity, teacherId } = validatedFields.data;
+
+	const gradeNumber = parseInt(grade, 10);
+	const capacityNumber = parseInt(capacity, 10);
+
+	try {
+		await prisma.class.update({
+			where: { id },
+			data: {
+				className,
+				grade: gradeNumber,
+				capacity: capacityNumber,
+				teacherId,
+			},
+		});
+
+		revalidatePath('/classes');
+	} catch (error) {
+		console.error('Failed to update class:', error);
+		return { message: 'Failed to update class' };
+	}
+	revalidatePath('/classes');
+	redirect('/classes');
+};
+
+export const deleteClass = async (id: string) => {
+	try {
+		await prisma.class.delete({
+			where: { id },
+		});
+		revalidatePath('/classes');
+	} catch (error) {
+		console.error('Failed to delete class!', error);
+		throw new Error('Failed to delete class!');
+	}
+	redirect('/classes');
 };

@@ -114,4 +114,18 @@ model Teacher {
   user          User?           @relation()
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Class         Class[]
+}
+
+model Class {
+  id        String   @id @default(cuid())
+  className String   @map("class_name")
+  grade     Int
+  capacity  Int
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  teacherId String   @map("teacher_id")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("Classes")
 }

@@ -123,3 +123,32 @@ export const getTeacherbyId = async (teacherId: string) => {
     console.log(error)
   }
 }
+
+// Kelas
+export const getClasses = async () => {
+  const session = await auth();
+
+  if (!session || !session.user) redirect('/dashboard');
+
+  try {
+    const classes = await prisma.class.findMany({
+      include: { teacher: { select: { name: true } } },
+    });
+    return classes;
+  } catch (error) {
+    console.error('Error fetching classes:', error);
+    return [];
+  }
+};
+
+export const getClassById = async (classId: string) => {
+  try {
+    const classData = await prisma.class.findUnique({
+      where: { id: classId },
+      include: { teacher: { select: { name: true } } },
+    });
+    return classData;
+  } catch (error) {
+    console.log(error);
+  }
+};

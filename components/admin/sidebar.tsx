@@ -38,7 +38,7 @@ const items = [
 			},
 			{
 				title: 'Classes',
-				url: '#',
+				url: '/classes',
 				icon: Presentation,
 				visible: ['Admin'],
 			},

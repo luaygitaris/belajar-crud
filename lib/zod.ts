@@ -66,3 +66,13 @@ export const TeacherSchema = z.object({
 	phone: z.string().min(1, 'Phone number is required'),
 });
 
+export const ClassSchema = z.object({
+	className: z.string().min(1, 'Class name is required'),
+	grade: z.string().refine((val) => !isNaN(Number(val)), {
+		message: 'Invalid grade value',
+	}),
+	capacity: z.string().refine((val) => !isNaN(Number(val)), {
+		message: 'Invalid capacity value',
+	}),
+	teacherId: z.string().min(1, 'Teacher is required'),
+});
